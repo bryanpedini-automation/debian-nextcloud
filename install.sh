@@ -8,6 +8,8 @@
 # UNIX commands.                                                              #
 #                                                                             #
 # Copyright (c) 2020 - Bryan Pedini                                           #
+# Licensed under the Gnu General Public License 3.0 (or later), see the       #
+# LICENSE file for more details                                               #
 #                                                                             #
 ###############################################################################
 
@@ -105,6 +107,14 @@ _update_system() {
     [[ "$ERR" ]] && echo "Error during system package updates: $ERR"
 }
 
+# Create required folders and set correct permissions
+_configure_permissions() {    
+    [[ "$VERBOSE" = true ]] && echo "Creating required folders and setting \
+correct permissions"
+    mkdir -p "$INSTALL_DIR"/{public,data}
+    chown -R www-data:www-data "$INSTALL_DIR"
+}
+
 # Ask the user for mysql `root` password and configure mysql in unattended mode
 _configure_mariadb_server() {
     read -sp 'Please type a `root` password for mysql database: ' \
@@ -161,14 +171,6 @@ associated login"
     mysql -u$MYSQL_ROOT_USER -p$MYSQL_ROOT_PASSWORD -e "$SQL"
 
     unset SQL; unset MYSQL_ROOT_USER; unset MYSQL_ROOT_PASSWORD; unset QUERY
-}
-
-# Create required folders and set correct permissions
-_configure_permissions() {    
-    [[ "$VERBOSE" = true ]] && echo "Creating required folders and setting \
-correct permissions"
-    mkdir -p "$INSTALL_DIR"/{public,data}
-    chown -R www-data:www-data "$INSTALL_DIR"
 }
 
 # Configure Apache2 to run the website
